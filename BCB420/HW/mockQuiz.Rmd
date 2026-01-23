@@ -1,0 +1,130 @@
+Q1
+```{r}
+myIDs <- data.frame(uID = c("PSE"),
+                    name = c("2ff"),
+                    refID = c("VVV"),
+                    ctrl = c(19.000),
+                    stim = c(23.000))
+
+
+```
+
+Q2
+```{r}
+myIDs$name[myIDs$ctrl > 20|myIDs$stim > 20]
+
+```
+Q3
+```{r} 
+
+myIDs$name[!is.na(myIDs$uID) & !is.na(myIDs$refID)]
+
+```
+Q4
+
+```{r}
+myIDs$expression_change <- log2(myIDs$stim / myIDs$ctrl)
+
+myIDs
+``` 
+Q5 
+
+```{r}
+grep("^[0-9]", myIDs$name, value = TRUE)
+```
+Q6
+
+You haven't loaded the package yet, do:
+```{r}
+library(stringr)
+```
+
+Q7
+
+```{r}
+seq <- "mssyfvnsfcgrypngpdyqlhnygdhssvseqfrdsasmhsgrygygyngmdlsvgrsg"
+```
+
+```{r}
+unlist(strsplit(seq, split =""))
+```
+
+Q8
+
+```{r}
+tf <- data.frame( name = "Irx2",
+  species = "Maylandia zebra",
+  taxId = "106582",
+  seqLen = 3884,
+  stringsAsFactors = FALSE)
+tf<- rbind(tf, data.frame( name = "Sox2",
+  species = "Gallus gallus",
+  taxId = "208526",
+  seqLen = 1182,
+  stringsAsFactors = FALSE))
+
+```
+
+```{r}
+tf$name[tf$seqLen < 2000]
+```
+Q9 
+
+```{r}
+length(which(tf$seqLen > tf$seqLen[which(tf$name == "Sox2")]))
+```
+Q10 
+
+```{r}
+unique(tf$species)
+```
+Q11 
+
+```{r}
+x <- 6:1
+mean(x) 
+  mean(x[]) 
+  mean(x[c(-1,-6)]) 
+  mean(x[c(2, 2, 5, 5)]) 
+  sum(x) / length(x) 
+  mean(x[1:6]) 
+  mean(6:1) 
+  mean(x[c(TRUE, FALSE, FALSE, FALSE, FALSE, TRUE)]) 
+  mean(x[x==3]) + 1/2 
+  mean(x[x>2]) - 1 
+ 
+```
+```{r}
+mySeq <- "ABC_12"
+mySeq <- gsub("[^a-zA-Z]", "", mySeq) 
+mySeq
+```
+Q14
+
+```{r}
+x <- matrix(c(0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89), byrow=FALSE, ncol = 3, 4)
+x 
+```
+```{r}
+x[1, 2]
+```
+
+```{r}
+x[as.integer(TRUE), TRUE]
+```
+The Row Index (as.integer(TRUE)): In R, logical TRUE converts to 1 and FALSE converts to 0. Therefore, as.integer(TRUE) becomes 1.
+
+The Column Index (TRUE): When you use a single logical value like TRUE to index a dimension, R uses recycling. It applies TRUE to every available index in that dimension. Essentially, TRUE means "select everything."
+
+The resulting operation is x[1, c(TRUE, TRUE, TRUE)]. 
+
+```{r}
+x[nrow(x), ncol(x)]
+``` 
+
+Q19 
+
+The "byrow" attribute is FALSE by default
+
+even though it is the default parameter it is always better form to specify the variables, especially variables that will change the value so drastically.  Although technically speaking it is not required.  
+
