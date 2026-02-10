@@ -78,26 +78,29 @@ base_dir <- "GSE234357"
 raw_tar_path <- file.path(base_dir, gse_id, paste0(gse_id, "_RAW.tar"))
 extract_dir <- file.path(base_dir, "extracted")
 
-# 1. Only extract raw data if the tar exists locally
-if (file.exists(raw_tar_path)) {
-  message("Raw files exist locally, attempting extraction...")
-  if (!dir.exists(extract_dir)) dir.create(extract_dir, recursive = TRUE)
-  tryCatch(
-    untar(raw_tar_path, exdir = extract_dir),
-    error = function(e) message("Skipping extraction: ", e$message)
-  )
+# 1. Check for Supplementary Files 
+if (!file.exists(raw_tar_path)) {
+  message("Downloading supplementary files...")
+  getGEOSuppFiles(gse_id, baseDir = base_dir)
 } else {
-  message("Raw files not found. Skipping extraction (Docker-friendly).")
+  message("Supplementary files already exist. Skipping download.")
 }
 
-# 2. GEO metadata
-geo_dir <- "geo_data"
-if (!dir.exists(geo_dir)) dir.create(geo_dir, recursive = TRUE)
+# 2. Check for Extracted Files
+if (length(list.files(extract_dir)) == 0) {
+  message("Extracting raw data...")
+  if (!dir.exists(extract_dir)) dir.create(extract_dir, recursive = TRUE)
+  untar(raw_tar_path, exdir = extract_dir)
+} else {
+  message("Extracted files found. Skipping untar.")
+}
 
-gse <- getGEO(gse_id, destdir = geo_dir, GSEMatrix = TRUE)
+# 3. Get Metadata (Check local geo_data first)
+# Note: getGEO with GSEMatrix=TRUE automatically checks destdir for cached files
+gse <- getGEO(gse_id, destdir = "geo_data", GSEMatrix = TRUE)
 metadata <- pData(gse[[1]])
 
-# 3. Filter metadata
+# Filter metadata 
 metadata_expr <- metadata[grep("gene expression", metadata$title), ]
 metadata_expr$Condition <- ifelse(grepl("GvHD", metadata_expr$title), "GvHD", "Control")
 ```
