@@ -98,12 +98,10 @@ dirs <- c("./figures", "./a2_results")
 for (d in dirs) if (!dir.exists(d)) dir.create(d)
 ```
 
-# Data set Pathway and Network Analysis
-
-## Thresholded over-representation analysis
+# Thresholded over-representation analysis
 
 
-### Load A1 results and Define gene lists 
+## Load A1 results and Define gene lists 
 
 Import differential expression results from A1 and filters them based on a nominal p-value ($p < 0.01$) and a fold-change threshold ($|logFC| > 1$) [@R-tibble]. By separating the genes into "up" and "down" lists, it prepares the specific inputs needed for directional Over-Representation Analysis (ORA).
 
@@ -128,7 +126,7 @@ cat("Down-regulated genes:", length(down_genes), "\n")
 ```
 
 
-### Create ranked list for GSEA
+## Create ranked list for GSEA
 
 A custom ranking score is calculated for every gene in the dataset using the formula $\text{sign}(\log FC) \times -\log_{10}(p\text{-value})$. This ensures that the most significantly upregulated genes appear at the top of the list and the most significantly downregulated genes at the bottom for the non-thresholded GSEA [@subramanian2005].
 
@@ -140,7 +138,7 @@ gsea_ranking <- all_genes %>%
   arrange(desc(rank_score))
 ```
 
-### Set ORA parameters and Run ORA analysis
+## Set ORA parameters and Run ORA analysis
 
 Defines and executes the run_ora function, which queries the g:Profiler database to find enriched pathways in the up-regulated, down-regulated, and combined gene sets [@gprofiler2]. 
 
@@ -202,7 +200,7 @@ enrichment_all <- subset(
 
 ---
 
-#### Which method did you choose and why?
+### Which method did you choose and why?
 
 I performed a thresholded over-representation analysis (ORA) using the gost() function from the gprofiler2 R package [@gprofiler2]. ORA was chosen because it evaluates whether predefined gene sets (e.g., pathways or biological processes) are statistically over-represented in a list of significantly differentially expressed genes compared with a background gene universe.
 
@@ -210,7 +208,7 @@ This method is appropriate for this analysis because the differential expression
 
 ---
 
-#### What annotation data did you use and why? What version of the annotation are you using?
+### What annotation data did you use and why? What version of the annotation are you using?
 
 Gene set annotations were obtained using the g:Profiler enrichment framework through the gprofiler2 R interface. The analysis used the human organism annotation (hsapiens Ensembl 113) and included the following sources:
 
@@ -235,7 +233,7 @@ cat("All genesets:", nrow(enrichment_all), "\n")
 
 ---
 
-#### How many genesets were returned with what thresholds?
+### How many genesets were returned with what thresholds?
 
 Using the defined thresholds, the enrichment analysis returned 16 gene sets for the up-regulated genes, 10 gene sets for the down-regulated genes, and 127 gene sets when all differentially expressed genes were analyzed together.
 
@@ -253,7 +251,7 @@ These thresholds were selected to remove overly small gene sets that may produce
 
 ---
 
-#### Run the analysis using the up-regulated set of genes, and the down-regulated set of genes separately. How do these results compare to using the whole list (i.e all differentially expressed genes together vs. the up-regulated and down regulated differentially expressed genes separately)?  
+### Run the analysis using the up-regulated set of genes, and the down-regulated set of genes separately. How do these results compare to using the whole list (i.e all differentially expressed genes together vs. the up-regulated and down regulated differentially expressed genes separately)?  
 
 When analyzing up-regulated and down-regulated genes separately, fewer enriched gene sets were identified (16 and 10 respectively). However, analyzing the combined list of all differentially expressed genes produced 127 enriched gene sets, substantially increasing the number of detected pathways.
 
@@ -315,10 +313,10 @@ p_ora
 <br>
 Figure 2. Top enriched pathways identified by over-representation analysis of significantly up-regulated and down-regulated genes. Bars represent enrichment significance measured as −log10(p-value). Pathways were obtained from Reactome, GO Biological Processes, and WikiPathways annotations using the g:Profiler enrichment framework [@R-dplyr].
 
-### Interpretation
+## Interpretation
 
 
-#### ORA Graph Analysis 
+### ORA Graph Analysis 
 
 The −log10(p-value) values range from ~0.5–0.9, corresponding to p-values between ~0.32 and 0.13, meaning none of the pathways reach the conventional significance threshold of p < 0.05.
 
@@ -326,7 +324,7 @@ This might be due to the high technical variance and small sample size ($N=9$) i
 
 ---
 
-#### Do the over-representation results support conclusions or mechanism discussed in the original paper?
+### Do the over-representation results support conclusions or mechanism discussed in the original paper?
 
 **My results do not appear to significantly reflect the primary findings of the paper.**
 
@@ -356,7 +354,7 @@ Other highly enriched up-regulated pathways included [@jarosch2023]:
 
 ---
 
-#### Can you find evidence, i.e. publications, to support some of the results that you see. How does this evidence support your results.
+### Can you find evidence, i.e. publications, to support some of the results that you see. How does this evidence support your results.
 
 **Up‑regulated pathways**
 
@@ -453,7 +451,7 @@ if(run_gsea) {
 
 ---
 
-#### What method did you use? What genesets did you use? Make sure to specify versions and cite your methods. 
+### What method did you use? What genesets did you use? Make sure to specify versions and cite your methods. 
 
 **Method and Ranking Strategy:**
 
@@ -473,7 +471,7 @@ Filtering: I applied a size filter where gene sets with fewer than 15 genes or m
 
 ---
 
-#### Summarize your enrichment results. 
+### Summarize your enrichment results. 
 
 Gene Set Enrichment Analysis (GSEA) was performed using a ranked list of 24,492 genes. After applying gene set size filters (minimum 15 genes and maximum 200 genes), 6,513 gene sets were retained for enrichment testing [@subramanian2005].
 
@@ -518,7 +516,7 @@ These pathways at bottom of the list (negative NES) highlights the loss of syste
 
 ---
 
-#### How do these results compare to the results from the thresholded analysis in Assignment 2. Compare qualitatively. Is this a straight forward comparison? Why or why not? 
+### How do these results compare to the results from the thresholded analysis in Assignment 2. Compare qualitatively. Is this a straight forward comparison? Why or why not? 
 
 The results from GSEA differ from the thresholded over-representation analysis (ORA) performed earlier in Assignment 2.
 
@@ -546,9 +544,9 @@ GSEA results (Pathways 4, 7, 8, and 11) show a major shift in lipid and ether li
 * GSEA, by looking at the rank rather than a cutoff, bypassed this noise to find 108 pathways at $p < 0.01$.
 * The GSEA results provide a Leading Edge (the genes like ZAP70 or CD3 contributing to the score), whereas ORA only tells us if the gene is "in or out."
 
-## Visualize Gene set Enrichment Analysis in Cytoscape
+# Visualize Gene set Enrichment Analysis in Cytoscape
 
-### Create an enrichment map 
+## Create an enrichment map 
 
 ![](figures/initial_map.jpeg)
 
@@ -557,13 +555,13 @@ Red nodes which indicate pathways positively enriched in aGvHD (NES > 0) are abs
 
 ---
 
-#### How many nodes and how many edges in the resulting map? 
+### How many nodes and how many edges in the resulting map? 
 
 86 nodes and 202 edges 
 
 ---
 
-#### What thresholds were used to create this map? 
+### What thresholds were used to create this map? 
 
 FDR q-value cutoff: 0.25 <br>
 p-value cutoff: 0.05 <br>
@@ -575,14 +573,14 @@ Data Set Edges: Automatic <br>
 Cutoff: 0.375 <br>
 Metric: Jaccard + Overlap Combined <br>
 
-### Annotate your network 
+## Annotate your network 
 
 ![](figures/enrichment_all.jpg)
 Figure 4: Draft of Enrichment Map of Biological Processes in Acute Graft-versus-Host Disease using the Cytoscape application to cluster related pathways into functional biological themes. Clusters are grouped together and single nodes are grouped together on the bottom left corner. <br> (Not the final publication level figure) [@merico2010].
 
 ---
 
-#### What parameters did you use to annotate the network. If you are using the default parameters make sure to list them as well.
+### What parameters did you use to annotate the network. If you are using the default parameters make sure to list them as well.
 
 Shape: oval <br>
 Hide Shapes: no <br>
@@ -593,7 +591,7 @@ Hide labels: no  <br>
 I also manually dragged text boxes and clusters for readability. As well as adjusting the "Style" tab parameters such as label position
 
 
-### Collapse your network to a theme network. 
+## Collapse your network to a theme network. 
 
 ![](figures/final_themes.png)
 
@@ -601,7 +599,7 @@ Theme network was created using the default parameters [@merico2010]. (3 word)
 
 ---
 
-#### What are the major themes present in this analysis? Do they fit with the model? Are there any novel pathways or themes?
+### What are the major themes present in this analysis? Do they fit with the model? Are there any novel pathways or themes?
 
 
 **1. Major Functional Clusters and Biological Themes**
@@ -642,16 +640,16 @@ Edges represent gene overlap, where a cutoff of **0.375** ensures that only biol
 A specific, notable edge exists between **"cotranslational protein targeting to membrane"** (within the `post-translational targeting` cluster) and **"SRP-dependent cotranslational protein targeting"** (within the `initiation complex` cluster). 
 
 
-### Make a publication ready figure - include this figure with proper legends in your notebook.
+## Make a publication ready figure - include this figure with proper legends in your notebook.
 
 ![](figures/final_map.png)
 Figure 5: Annotated Enrichment Map of Biological Processes in Acute Graft-versus-Host Disease using the AutoAnnotate Cytoscape application to cluster related pathways into functional biological themes. Clusters are grouped together and single nodes are grouped together on the bottom left corner [@merico2010]. 
 
-### Interpretation of Results 
+## Interpretation of Results 
 
 ---
 
-#### Do the enrichment results support conclusions or mechanism discussed in the original paper?
+### Do the enrichment results support conclusions or mechanism discussed in the original paper?
 
 These results partially support the conclusions and mechanisms described in the original paper, with some clusters directly matching the data presented in the Enrichment Map and the paper's textual GSEA results [@jarosch2023].
 
@@ -694,7 +692,7 @@ The paper provides a strong mechanistic link for this cluster through its analys
 
 --- 
 
-#### How do these results differ from the results you got from Assignment 2 thresholded methods
+### How do these results differ from the results you got from Assignment 2 thresholded methods
 
 **1. Sensitivity and Statistical Recovery**
 
@@ -713,7 +711,7 @@ The paper provides a strong mechanistic link for this cluster through its analys
 
 ---
 
-#### Can you find evidence, i.e. publications, to support some of the results that you see. How does this evidence support your result?
+### Can you find evidence, i.e. publications, to support some of the results that you see. How does this evidence support your result?
 
 **Barrier failure and “leaky gut”**
 
